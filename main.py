@@ -9,7 +9,9 @@ column = 0
 
 def open_file():
     try:
-        return open("inputs/full_example.c", "r")
+        # return open("inputs/full_example.c", "r")
+        # return open("inputs/full_example.c", "r")
+        return open("inputs/error_example.c", "r")
     except Exception as e:
         print("Erro ao abrir o arquivo", e)
         exit(1)
@@ -29,7 +31,7 @@ if __name__ == '__main__':
             if lex_analyzer.state == STATES.INITIAL:  # OK
                 if cursor == "/" and line_iterator[column] == "*" and lex_analyzer.state == STATES.INITIAL and lex_analyzer.state != STATES.COMMENT:
                     lex_analyzer.state = STATES.COMMENT
-                    lex_analyzer.response_token.append(["/*"])
+                    lex_analyzer.append_token("/*")
 
                 if re.search(r"^(#)", line_iterator) and lex_analyzer.state == STATES.INITIAL and lex_analyzer.state != STATES.COMMENT:
                     break
@@ -43,7 +45,7 @@ if __name__ == '__main__':
                     lex_analyzer.state = STATES.LITERAL
                 if utils.is_number(cursor) and utils.is_special_caracter(cursor) and lex_analyzer.state == STATES.INITIAL and lex_analyzer.state != STATES.COMMENT:
                     if not utils.is_error(cursor):
-                        lex_analyzer.response_token.append([cursor])
+                        lex_analyzer.append_token(cursor)
                     else:
                         lex_analyzer.append_error(cursor)
 

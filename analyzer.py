@@ -1,4 +1,4 @@
-from constants import STATES, ALL_ELEMENTS, BIN_OPS
+from constants import STATES, ALL_ELEMENTS, BIN_OPS, TYPE_BY_OPERATORS
 import re
 import utils
 
@@ -19,11 +19,20 @@ class Analyzer:
         if token != "\n" and token != " ":
             self.response_token.append(["Token não reconhecido", token])
 
+    def append_token(self, token):
+        type = TYPE_BY_OPERATORS.get(token)
+        if type is not None:
+            self.response_token.append([type, token])
+        elif re.match(r"[\d]", token):
+            self.response_token.append(["NUMBER", token])
+        else:
+            self.response_token.append(["ID", token])
+
     def check_comment(self, cursor):
         self.acumula = self.acumula + cursor
         if re.search(r"(\*\/)", self.acumula):
             self.state = STATES.INITIAL
-            self.response_token.append(["*/"])
+            self.append_token("*/")
 
     def check_identifier(self, cursor):
         if re.match(r"([\w])", cursor):
@@ -32,20 +41,20 @@ class Analyzer:
             self.state = STATES.INITIAL
 
             if utils.is_reserved_word(self.token):
-                self.response_token.append([self.token])
+                self.append_token(self.token)
                 if cursor != " ":
                     if not utils.is_error(self.token):
-                        self.response_token.append([self.token])
+                        self.append_token(self.token)
                     else:
                         self.append_error(self.token)
                 self.token = ""
             else:
-                self.response_token.append(["ID", self.token])
+                self.append_token(self.token)
                 if utils.is_special_caracter(cursor):
                     """Vai inserir o k como separador """
                     if cursor != re.match(r"\s", cursor):
                         if not utils.is_error(cursor):
-                            self.response_token.append([cursor])
+                            self.append_token(cursor)
                         else:
                             self.append_error(cursor)
                     self.state = STATES.INITIAL
@@ -57,7 +66,7 @@ class Analyzer:
         if re.match(r"[\"]", cursor):
             lit = re.match(r"[\"]+[%\w\s]+[\"]*", self.token)
             if lit is not None:
-                self.response_token.append(["Literal", lit.group()])
+                self.append_token(lit.group())
                 self.token = ""
                 self.state = STATES.INITIAL
 
@@ -67,10 +76,10 @@ class Analyzer:
         if utils.is_number(cursor):
             if re.match(r"(^[0-9]*$)", self.numeric_token):
                 if re.match(r"(^[0-9]*$)", self.numeric_token) is not None:
-                    self.response_token.append(["NUM", self.numeric_token])
+                    self.append_token(self.numeric_token)
                     if cursor != " ":
                         if not utils.is_error(cursor):
-                            self.response_token.append([cursor])
+                            self.append_token(cursor)
                         else:
                             self.append_error(cursor)
                     self.state = STATES.INITIAL
@@ -86,7 +95,7 @@ class Analyzer:
                 "Armazena token de separadores"
                 if cursor != " ":
                     if not utils.is_error(cursor):
-                        self.response_token.append([cursor])
+                        self.append_token(cursor)
                     else:
                         self.append_error(cursor)
                 self.state = STATES.INITIAL
