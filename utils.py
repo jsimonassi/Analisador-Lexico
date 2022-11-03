@@ -1,5 +1,5 @@
 import re
-from data import constants
+import constants
 
 
 def is_special_caracter(caracter):

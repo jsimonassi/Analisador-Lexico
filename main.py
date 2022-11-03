@@ -1,7 +1,7 @@
-from data.constants import STATES
+from constants import STATES
 import re
-from data import utils
-from data.analyzer import Analyzer
+import utils
+from analyzer import Analyzer
 
 line = 0
 column = 0
@@ -9,9 +9,9 @@ column = 0
 
 def open_file():
     try:
-         return open("data/inputs/full_example.c", "r")
-        # return open("data/inputs/full_example.c", "r")
-        #return open("data/inputs/error_example.c", "r")
+         return open("inputs/full_example.c", "r")
+        # return open("inputs/full_example.c", "r")
+        #return open("inputs/error_example.c", "r")
     except Exception as e:
         print("Erro ao abrir o arquivo", e)
         exit(1)

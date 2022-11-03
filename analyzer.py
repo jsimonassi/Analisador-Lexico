@@ -1,6 +1,6 @@
-from data.constants import STATES, ALL_ELEMENTS, BIN_OPS, TYPE_BY_OPERATORS
+from constants import STATES, ALL_ELEMENTS, BIN_OPS, TYPE_BY_OPERATORS
 import re
-from data import utils
+import utils
 
 
 class Analyzer:
