@@ -1,6 +1,6 @@
-from constants import STATES
+from data.constants import STATES
 import re
-import utils
+import data.utils
 from analyzer import Analyzer
 
 line = 0
