@@ -6,7 +6,8 @@ Implementação do Analisador Léxico
 COMPILADORES - 2022.2
 
 
-Palavras reservadas: int, void, char, return, if, else, while, for.
+Palavras reservadas: 
+        `int, void, char, return, if, else, while, for.`
 
 <h3>Expressões Regulares:</h3>
 
