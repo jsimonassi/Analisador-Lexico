@@ -8,7 +8,7 @@ state = STATES.INITIAL
 response_token = []
 token = ""
 numeric_token = ""
-
+acumula = ""
 
 def open_file():
     """Abre o arquivo de entrada"""
@@ -17,6 +17,12 @@ def open_file():
     except Exception as e:
         print("Erro ao abrir o arquivo")
         exit(1)
+
+
+def append_error(token):
+    """Adiciona o erro na lista de tokens"""
+    if token != "\n" and token != " ":
+        response_token.append(["Token não reconhecido", token])
 
 
 input_file = open_file()
@@ -48,13 +54,14 @@ if __name__ == '__main__':
                     if not utils.is_error(cursor):
                         response_token.append([cursor])
                     else:
-                        response_token.append(["Token não reconhecido", cursor])
+                        append_error(cursor)
 
 
 
             if state == STATES.COMMENT: #OK
                 # TODO: Validar se comentário não ficou com / pendente
-                if cursor == "*" and line_iterator[column] == "/":
+                acumula = acumula + cursor
+                if re.search(r"(\*\/)", acumula):
                     state = STATES.INITIAL
                     response_token.append(["*/"])
 
@@ -72,7 +79,7 @@ if __name__ == '__main__':
                             if not utils.is_error(token):
                                 response_token.append([token])
                             else:
-                                response_token.append(["Token não reconhecido", token])
+                                append_error(token)
                         token = ""
                     else:
                         response_token.append(["ID", token])
@@ -82,7 +89,7 @@ if __name__ == '__main__':
                                 if not utils.is_error(cursor):
                                     response_token.append([cursor])
                                 else:
-                                    response_token.append(["Token não reconhecido", cursor])
+                                    append_error(cursor)
                             state = STATES.INITIAL
                         token = ""
 
@@ -102,20 +109,20 @@ if __name__ == '__main__':
                 if re.match(r"[\w.]", cursor):
                     numeric_token = numeric_token + cursor
                 if utils.is_number(cursor):
-                    if re.match(r"([0-9]+)", numeric_token):
-                        if re.match(r"([0-9]+)", numeric_token) is not None:
+                    if re.match(r"(^[0-9]*$)", numeric_token):
+                        if re.match(r"(^[0-9]*$)", numeric_token) is not None:
                             response_token.append(["NUM", numeric_token])
                             if cursor != " ":
                                 if not utils.is_error(cursor):
                                     response_token.append([cursor])
                                 else:
-                                    response_token.append(["Token não reconhecido", cursor])
+                                    append_error(cursor)
                             state = STATES.INITIAL
                             numeric_token = ""
                     else:
                         if cursor in ALL_ELEMENTS or re.match(r"\s|\n", cursor) or cursor in BIN_OPS:
                             """Identifica o token inválido"""
-                            response_token.append(["Token não reconhecido", cursor])
+                            append_error(cursor)
                             numeric_token = ""
                             state = STATES.INITIAL
                 else:
@@ -125,7 +132,7 @@ if __name__ == '__main__':
                             if not utils.is_error(cursor):
                                 response_token.append([cursor])
                             else:
-                                response_token.append(["Token não reconhecido", cursor])
+                                append_error(cursor)
                         state = STATES.INITIAL
 
 

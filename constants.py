@@ -4,7 +4,8 @@ RESERVED_WORDS = ['int', 'char', 'if', 'else', 'for', 'while', 'return']
 
 BIN_OPS = ['+', '-', '*', '/']
 
-REL_OP = ['<', '>', '==', '!=', '<=', '>=']
+# TODO: Igualdade é relacional?
+REL_OP = ['<', '>', '==', '!=', '<=', '>=', '=']
 
 LOGIC_OP = ['&&', '||']
 
@@ -19,5 +20,3 @@ class STATES(Enum):
     IDENTIFIER = 2
     LITERAL = 3
     NUMERIC = 4
-
-
