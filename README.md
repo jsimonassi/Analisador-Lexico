@@ -1,4 +1,4 @@
-# Analisador-Lexico
+# Analisador Léxico
 Analisador léxico para a a linguagem C--
 .
 
