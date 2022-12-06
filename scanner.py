@@ -3,22 +3,22 @@ import re
 import utils
 from analyzer import Analyzer
 
-line = 0
-column = 0
-
 
 def open_file():
     try:
-         return open("inputs/full_example.c", "r")
-        # return open("inputs/full_example.c", "r")
-        #return open("inputs/error_example.c", "r")
+        return open("inputs/full_example.c", "r")
+    # return open("inputs/full_example.c", "r")
+    # return open("inputs/error_example.c", "r")
     except Exception as e:
         print("Erro ao abrir o arquivo", e)
         exit(1)
 
 
 input_file = open_file()
-if __name__ == '__main__':
+
+
+def get_tokens():
+    line = 0
 
     lex_analyzer = Analyzer()
 
@@ -28,12 +28,12 @@ if __name__ == '__main__':
         for cursor in line_iterator:
             column = column + 1
 
-            if lex_analyzer.state == STATES.INITIAL:  # OK
+            if lex_analyzer.state == STATES.INITIAL:
                 if cursor == "/" and line_iterator[column] == "*" and lex_analyzer.state == STATES.INITIAL and lex_analyzer.state != STATES.COMMENT:
                     lex_analyzer.state = STATES.COMMENT
                     lex_analyzer.append_token("/*")
 
-                if re.search(r"^(#)", line_iterator) and lex_analyzer.state == STATES.INITIAL and lex_analyzer.state != STATES.COMMENT:
+                if re.search(r"^(#)",line_iterator) and lex_analyzer.state == STATES.INITIAL and lex_analyzer.state != STATES.COMMENT:
                     break
 
                 if re.search(r"([A-Za-z_])", cursor) and lex_analyzer.state == STATES.INITIAL and lex_analyzer.state != STATES.COMMENT:
@@ -61,4 +61,4 @@ if __name__ == '__main__':
             if lex_analyzer.state == STATES.NUMERIC:
                 lex_analyzer.check_numeric(cursor)
 
-    print(lex_analyzer.response_token)
+    return lex_analyzer.response_token

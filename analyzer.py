@@ -99,3 +99,40 @@ class Analyzer:
                     else:
                         self.append_error(cursor)
                 self.state = STATES.INITIAL
+
+    # def add_id_double(self, token):
+    #     global flag
+    #     if re.match(r"[\=]", token) and curr_line[column] == "=":
+    #
+    #         flag = 1
+    #         addId("==")
+    #         elem = curr_line[column]
+    #
+    #     elif re.match(r"[\<]", token) and curr_line[column] == "=":
+    #         flag = 1
+    #         addId("<=")
+    #         elem = curr_line[column]
+    #
+    #     elif re.match(r"[\>]", token) and curr_line[column] == "=":
+    #         flag = 1
+    #         addId(">=")
+    #         elem = curr_line[column]
+    #
+    #     elif re.match(r"[\&]", token) and curr_line[column] == "&":
+    #         flag = 1
+    #         addId("&&")
+    #         elem = curr_line[column]
+    #
+    #     elif re.match(r"[\|]", token) and curr_line[column] == "|":
+    #         flag = 1
+    #         addId("||")
+    #         elem = curr_line[column]
+    #
+    #     elif re.match(r"[\!]", token) and curr_line[column] == "=":
+    #         flag = 1
+    #         addId("!=")
+    #         elem = curr_line[column]
+    #
+    #     else:
+    #
+    #         addId(token)
