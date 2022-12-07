@@ -10,11 +10,7 @@ TEST_POSITION = {
 
 
 def var_decl():
-    if match("ID") and var_decl2():
-        increment_consumed(1)
-        return True
-    else:
-        #Error
+    pass
 
 
 def _type():
