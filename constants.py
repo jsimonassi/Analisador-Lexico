@@ -38,6 +38,7 @@ TYPE_BY_OPERATORS = {
     ',': 'COMMA',
     'int': 'INT',
     'char': 'CHAR',
+    'void': 'VOID',
     'if': 'IF',
     'else': 'ELSE',
     'for': 'FOR',
