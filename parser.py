@@ -28,7 +28,7 @@ def var_decl1():
         return True
     else:
         count_position = base
-    return False
+    return True
 
 
 # end var_decl ____________________________________________________________
@@ -56,11 +56,11 @@ def parm_types():
 def parm_types2():
     global count_position
     base = count_position
-    if match(','):
+    if match(',') and parm_types():
         return True
     else:
         count_position = base
-    return False
+    return True
 
 
 # end parm_types ____________________________________________________________
@@ -97,7 +97,7 @@ def dcl():
 def dcl1():
     global count_position
     base = count_position
-    if var_decl():
+    if var_decl() and dcl2():
         return True
     else:
         count_position = base
@@ -105,17 +105,17 @@ def dcl1():
         return True
     else:
         count_position = base
-    return False
+    return True
 
 
 def dcl2():
     global count_position
     base = count_position
-    if match(','):
+    if match(',') and var_decl():
         return True
     else:
         count_position = base
-    return False
+    return True
 
 
 def dcl3():
@@ -135,13 +135,13 @@ def dcl4():
         return True
     else:
         count_position = base
-    return False
+    return True
 
 
 def dcl5():
     global count_position
     base = count_position
-    if match('extern'):
+    if match('extern') and dcl():
         return True
     else:
         count_position = base
@@ -168,7 +168,7 @@ def func():
 def func1():
     global count_position
     base = count_position
-    if match("ID") and match("(") and parm_types() and match(")") and match("{") and (func2() or func4()) and match("}"):
+    if match("ID") and match("(") and parm_types() and match(")") and match("{") and func2() and func4() and match("}"):
         return True
     else:
         count_position = base
@@ -182,7 +182,7 @@ def func2():
         return True
     else:
         count_position = base
-    return False
+    return True
 
 
 def func3():
@@ -192,7 +192,7 @@ def func3():
         return True
     else:
         count_position = base
-    return False
+    return True
 
 
 def func4():
@@ -202,7 +202,7 @@ def func4():
         return True
     else:
         count_position = base
-    return False
+    return True
 
 
 # end func ____________________________________________________________
@@ -211,90 +211,89 @@ def func4():
 def stmt():
     global count_position
     base = count_position
-    if match("if") and match("(") and expr() and match(")"):
+    if match("if") and match("(") and expr() and match(")") and stmt():
         return True
     else:
         count_position = base
-    if match("if") and match("(") and expr() and match(")") and match("else"):
+    if match("if") and match("(") and expr() and match(")") and match("else") and stmt():
         return True
     else:
         count_position = base
-    if match("while") and match("(") and expr() and match(")"):
+    if match("while") and match("(") and expr() and match(")") and stmt():
         return True
     else:
         count_position = base
-    if match("for") and match("(") and match(";") and match(";") and match(")"):
+    if match("for") and match("(") and match(";") and match(";") and match(")") and stmt():
         return True
     else:
         count_position = base
-    if match("for") and match("(") and assg() and match(";") and match(";") and match(")"):
+    if match("for") and match("(") and assg() and match(";") and match(";") and match(")") and stmt():
         return True
     else:
         count_position = base
-    if match("for") and match("(") and match(";") and expr() and match(";") and match(")"):
+    if match("for") and match("(") and match(";") and expr() and match(";") and match(")") and stmt():
         return True
     else:
         count_position = base
-    if match("for") and match("(") and match(";") and match(";") and assg() and match(")"):
+    if match("for") and match("(") and match(";") and match(";") and assg() and match(")") and stmt():
         return True
     else:
         count_position = base
-    if match("for") and match("(") and assg() and match(";") and expr() and match(";") and match(")"):
+    if match("for") and match("(") and assg() and match(";") and expr() and match(";") and match(")") and stmt():
         return True
     else:
         count_position = base
-    if match("for") and match("(") and assg() and match(";") and match(";") and assg() and match(")"):
+    if match("for") and match("(") and assg() and match(";") and match(";") and assg() and match(")") and stmt():
         return True
     else:
         count_position = base
-    if match("for") and match("(") and match(";") and expr() and match(";") and assg() and match(")"):
+    if match("for") and match("(") and match(";") and expr() and match(";") and assg() and match(")") and stmt():
         return True
     else:
         count_position = base
-    if match("for") and match("(") and assg() and match(";") and expr() and match(";") and assg() and match(")"):
+    if match("for") and match("(") and assg() and match(";") and expr() and match(";") and assg() and match(")") and stmt():
         return True
     else:
         count_position = base
-    if match("return") and match(";"):
+    if match("return") and match(";") and stmt():
         return True
     else:
         count_position = base
-    if match("return") and expr() and match(";"):
+    if match("return") and expr() and match(";") and stmt():
         return True
     else:
         count_position = base
-    if assg() and match(";"):
+    if assg() and match(";") and stmt():
         return True
     else:
         count_position = base
-    if match("id") and match("(") and match(")") and match(";"):
+    if match("id") and match("(") and match(")") and match(";") and stmt():
         return True
     else:
         count_position = base
-    if match("id") and match("(") and expr() and stmt2() and match(")") and match(";"):
+    if match("id") and match("(") and expr() and stmt2() and match(")") and match(";") and stmt():
         return True
     else:
         count_position = base
-    if match("{") and stmt() and match("}"):
+    if match("{") and stmt() and match("}") and stmt():
         return True
     else:
         count_position = base
-    if match(";"):
+    if match(";") and stmt():
         return True
     else:
         count_position = base
-    return False
+    return True
 
 
 def stmt2():
     global count_position
     base = count_position
-    if match(",") and expr():
+    if match(",") and expr() and stmt2():
         return True
     else:
         count_position = base
-    return False
-
+    return True
 
 # end stmt ____________________________________________________________
 
@@ -374,25 +373,25 @@ def expr2():
         return True
     else:
         count_position = base
-    return False
+    return True
 
 
 def expr3():
     global count_position
     base = count_position
-    if binop() and expr():
+    if binop() and expr() and expr3():
         return True
     else:
         count_position = base
-    if relop and expr():
+    if relop and expr() and expr3():
         return True
     else:
         count_position = base
-    if logicalOp() and expr():
+    if logicalOp() and expr() and expr3():
         return True
     else:
         count_position = base
-        return False
+        return True
 
 
 # end expr ____________________________________________________________
@@ -469,6 +468,8 @@ def match(token, is_type_token=1):
     global token_list
     global count_position
     global error_aux
+    if count_position + 1 > len(token_list):
+        raise Exception("Erro de sintaxe")
     if token_list[count_position][1] == token or token_list[count_position][0] == token:
         countIncremental(1)
         return True
@@ -480,6 +481,7 @@ def match(token, is_type_token=1):
 def parser():
     global token_list
     token_list = scanner.get_tokens()
+    print(token_list)
     if prog():
         print("Parsing successful")
     else:

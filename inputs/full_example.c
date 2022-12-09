@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-int a(void) {
- int a[2];
- return;
- });
-
+int main(void){
+ for (;;) {
+  a =2
+ }
+}
