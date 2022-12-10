@@ -267,11 +267,11 @@ def stmt():
         return True
     else:
         count_position = base
-    if match("id") and match("(") and match(")") and match(";") and stmt():
+    if match("ID") and match("(") and match(")") and match(";") and stmt():
         return True
     else:
         count_position = base
-    if match("id") and match("(") and expr() and stmt2() and match(")") and match(";") and stmt():
+    if match("ID") and match("(") and expr() and stmt2() and match(")") and match(";") and stmt():
         return True
     else:
         count_position = base
@@ -351,7 +351,7 @@ def expr():
         return True
     else:
         count_position = base
-    if match("intcon") and expr3():
+    if match("NUMBER") and expr3():
         return True
     else:
         count_position = base
@@ -383,7 +383,7 @@ def expr3():
         return True
     else:
         count_position = base
-    if relop and expr() and expr3():
+    if relop() and expr() and expr3():
         return True
     else:
         count_position = base
@@ -464,7 +464,7 @@ def countIncremental(amount):
 
 
 # Verifica o match com o token atual
-def match(token, is_type_token=1):
+def match(token):
     global token_list
     global count_position
     global error_aux
@@ -485,7 +485,8 @@ def parser():
     if prog():
         print("Parsing successful")
     else:
-        raise Exception("Unpexpected token: " + error_aux[0])
+        raise Exception("Unpexpected token: " + str(error_aux))
 
 
 parser()
+
