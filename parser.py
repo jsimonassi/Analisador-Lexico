@@ -480,12 +480,12 @@ def match(token):
 
 def parser():
     global token_list
-    token_list = scanner.get_tokens()
+    token_list = scanner.lexical()
     print(token_list)
-    if prog():
-        print("Parsing successful")
-    else:
-        raise Exception("Unpexpected token: " + str(error_aux))
+    # if prog():
+    #     print("Parsing successful")
+    # else:
+    #     raise Exception("Unpexpected token: " + str(error_aux))
 
 
 parser()

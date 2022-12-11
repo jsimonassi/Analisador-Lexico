@@ -5,9 +5,9 @@ import constants
 def is_special_caracter(caracter):
     """Verifica se o elemento é um separador dos numeros"""
     if (re.match(r"[\w]", caracter)):
-        return 0
+        return False
     else:
-        return 1
+        return True
 
 
 def is_reserved_word(word):
