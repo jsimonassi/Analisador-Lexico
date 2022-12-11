@@ -13,7 +13,7 @@ def open_file():
         exit(1)
 
 
-def lexical():
+def get_token_list():
     lex_analyzer = Analyzer()
     input_file = open_file()
     for line_iterator in input_file:
@@ -86,6 +86,3 @@ def lexical():
                 lex_analyzer.run_state_numeric()
 
     return lex_analyzer.response_token
-
-
-print(lexical())

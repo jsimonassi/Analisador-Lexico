@@ -1,19 +1,23 @@
-import scanner
+from scanner import *
 
 token_list = []
 count_position = 0
 count_base = 0
 error_aux = []
-TEST_POSITION = {
-    "LEFT": 0,
-    "RIGHT": 1,
-}
+max_base = 0
+
+
+def update_max_base(base):
+    global max_base
+    if(max_base < base):
+        max_base = base
 
 
 # var_decl ____________________________________________________________
 def var_decl():
     global count_position
     base = count_position
+    update_max_base(base)
     if match("ID") and var_decl1():
         return True
     else:
@@ -24,6 +28,7 @@ def var_decl():
 def var_decl1():
     global count_position
     base = count_position
+    update_max_base(base)
     if match("[") and match("NUMBER") and match("]"):
         return True
     else:
@@ -38,6 +43,7 @@ def var_decl1():
 def parm_types():
     global count_position
     base = count_position
+    update_max_base(base)
     if match('void'):
         return True
     else:
@@ -56,6 +62,7 @@ def parm_types():
 def parm_types2():
     global count_position
     base = count_position
+    update_max_base(base)
     if match(',') and parm_types():
         return True
     else:
@@ -68,6 +75,7 @@ def parm_types2():
 def _type():
     global count_position
     base = count_position
+    update_max_base(base)
     if match("int") or match("char"):
         return True
     else:
@@ -79,6 +87,7 @@ def _type():
 def dcl():
     global count_position
     base = count_position
+    update_max_base(base)
     if _type() and dcl1():
         return True
     else:
@@ -97,6 +106,7 @@ def dcl():
 def dcl1():
     global count_position
     base = count_position
+    update_max_base(base)
     if var_decl() and dcl2():
         return True
     else:
@@ -111,6 +121,7 @@ def dcl1():
 def dcl2():
     global count_position
     base = count_position
+    update_max_base(base)
     if match(',') and var_decl():
         return True
     else:
@@ -121,6 +132,7 @@ def dcl2():
 def dcl3():
     global count_position
     base = count_position
+    update_max_base(base)
     if match("ID") and match("(") and parm_types() and match(")"):
         return True
     else:
@@ -131,6 +143,7 @@ def dcl3():
 def dcl4():
     global count_position
     base = count_position
+    update_max_base(base)
     if match(',') and dcl3():
         return True
     else:
@@ -141,6 +154,7 @@ def dcl4():
 def dcl5():
     global count_position
     base = count_position
+    update_max_base(base)
     if match('extern') and dcl():
         return True
     else:
@@ -154,6 +168,7 @@ def dcl5():
 def func():
     global count_position
     base = count_position
+    update_max_base(base)
     if _type() and func1():
         return True
     else:
@@ -168,6 +183,7 @@ def func():
 def func1():
     global count_position
     base = count_position
+    update_max_base(base)
     if match("ID") and match("(") and parm_types() and match(")") and match("{") and func2() and func4() and match("}"):
         return True
     else:
@@ -178,6 +194,7 @@ def func1():
 def func2():
     global count_position
     base = count_position
+    update_max_base(base)
     if _type() and var_decl() and func3() and match(';'):
         return True
     else:
@@ -188,6 +205,7 @@ def func2():
 def func3():
     global count_position
     base = count_position
+    update_max_base(base)
     if match(',') and var_decl():
         return True
     else:
@@ -198,6 +216,7 @@ def func3():
 def func4():
     global count_position
     base = count_position
+    update_max_base(base)
     if stmt():
         return True
     else:
@@ -211,6 +230,7 @@ def func4():
 def stmt():
     global count_position
     base = count_position
+    update_max_base(base)
     if match("if") and match("(") and expr() and match(")") and stmt():
         return True
     else:
@@ -289,11 +309,13 @@ def stmt():
 def stmt2():
     global count_position
     base = count_position
+    update_max_base(base)
     if match(",") and expr() and stmt2():
         return True
     else:
         count_position = base
     return True
+
 
 # end stmt ____________________________________________________________
 
@@ -301,6 +323,7 @@ def stmt2():
 def assg():
     global count_position
     base = count_position
+    update_max_base(base)
     if match("ID") and match("=") and expr():
         return True
     else:
@@ -319,6 +342,7 @@ def assg():
 def expr():
     global count_position
     base = count_position
+    update_max_base(base)
     if match("-") and expr3():
         return True
     else:
@@ -369,6 +393,7 @@ def expr():
 def expr2():
     global count_position
     base = count_position
+    update_max_base(base)
     if match(",") and expr() and expr3():
         return True
     else:
@@ -379,6 +404,7 @@ def expr2():
 def expr3():
     global count_position
     base = count_position
+    update_max_base(base)
     if binop() and expr() and expr3():
         return True
     else:
@@ -401,6 +427,7 @@ def expr3():
 def binop():
     global count_position
     base = count_position
+    update_max_base(base)
     if match("+") or match("-") or match("*") or match("/") or match("%"):
         return True
     else:
@@ -415,6 +442,7 @@ def binop():
 def relop():
     global count_position
     base = count_position
+    update_max_base(base)
     if match("<") or match(">") or match("<=") or match(">=") or match("==") or match("!="):
         return True
     else:
@@ -430,6 +458,7 @@ def relop():
 def logicalOp():
     global count_position
     base = count_position
+    update_max_base(base)
     if match("&&") or match("||"):
         return True
     else:
@@ -443,6 +472,7 @@ def logicalOp():
 def prog():
     global count_position
     base = count_position
+    update_max_base(base)
     if dcl() and match(';'):
         return True
     else:
@@ -464,12 +494,10 @@ def countIncremental(amount):
 
 
 # Verifica o match com o token atual
-def match(token):
+def match(token, is_type_token=1):
     global token_list
     global count_position
     global error_aux
-    if count_position + 1 > len(token_list):
-        raise Exception("Erro de sintaxe")
     if token_list[count_position][1] == token or token_list[count_position][0] == token:
         countIncremental(1)
         return True
@@ -480,13 +508,13 @@ def match(token):
 
 def parser():
     global token_list
-    token_list = scanner.lexical()
+    token_list = get_token_list()
     print(token_list)
-    # if prog():
-    #     print("Parsing successful")
-    # else:
-    #     raise Exception("Unpexpected token: " + str(error_aux))
+    if prog():
+        print("Parsing successful")
+    else:
+        print("Unexpected token before, or missing token before " + "'" + str(token_list[max_base][1]) + "'" + " on line: " + str(token_list[max_base][2]))
 
 
-parser()
-
+if __name__ == '__main__':
+    parser()
