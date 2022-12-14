@@ -1,7 +1,9 @@
 #include <stdio.h>
 
 int main(void){
- a = 20;
+ int a;
+ int b;
+ a = 20 + c;
  while(a > 2){
     a = a - 1;
  }

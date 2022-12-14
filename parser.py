@@ -5,20 +5,30 @@ count_position = 0
 count_base = 0
 error_aux = []
 max_base = 0
+list_id = []
+
+
+def appendId(token):
+    if (token[1] in list_id):
+        print("Token '" + str(token[1]) + "' already exists. Redeclaration in line: " + str(token[2]))
+        exit(1)
+    list_id.append(token[1])
 
 
 def update_max_base(base):
     global max_base
-    if(max_base < base):
+    if (max_base < base):
         max_base = base
 
 
 # var_decl ____________________________________________________________
 def var_decl():
     global count_position
+    global list_id
     base = count_position
     update_max_base(base)
-    if match("ID") and var_decl1():
+    if match("ID", isDecl=True) and var_decl1():
+        appendId(token_list[base])
         return True
     else:
         count_position = base
@@ -48,11 +58,13 @@ def parm_types():
         return True
     else:
         count_position = base
-    if _type() and match("ID") and parm_types2():
+    if _type() and match("ID", isDecl=True) and parm_types2():
+        appendId(token_list[base + 1])
         return True
     else:
         count_position = base
-    if _type() and match("ID") and match("[") and match("]") and parm_types2():
+    if _type() and match("ID", isDecl=True) and match("[") and match("]") and parm_types2():
+        appendId(token_list[base + 1])
         return True
     else:
         count_position = base
@@ -195,7 +207,7 @@ def func2():
     global count_position
     base = count_position
     update_max_base(base)
-    if _type() and var_decl() and func3() and match(';'):
+    if _type() and var_decl() and func3() and match(';') and func2():
         return True
     else:
         count_position = base
@@ -206,7 +218,7 @@ def func3():
     global count_position
     base = count_position
     update_max_base(base)
-    if match(',') and var_decl():
+    if match(',') and var_decl() and func3():
         return True
     else:
         count_position = base
@@ -217,7 +229,7 @@ def func4():
     global count_position
     base = count_position
     update_max_base(base)
-    if stmt():
+    if stmt() and func2():
         return True
     else:
         count_position = base
@@ -271,7 +283,8 @@ def stmt():
         return True
     else:
         count_position = base
-    if match("for") and match("(") and assg() and match(";") and expr() and match(";") and assg() and match(")") and stmt():
+    if match("for") and match("(") and assg() and match(";") and expr() and match(";") and assg() and match(
+            ")") and stmt():
         return True
     else:
         count_position = base
@@ -379,7 +392,7 @@ def expr():
         return True
     else:
         count_position = base
-    if match("charcon") and expr3():
+    if match("CHAR") and expr3():
         return True
     else:
         count_position = base
@@ -494,10 +507,14 @@ def countIncremental(amount):
 
 
 # Verifica o match com o token atual
-def match(token, is_type_token=1):
+def match(token, isDecl=False):
     global token_list
     global count_position
     global error_aux
+    if not isDecl and token_list[count_position][0] == 'ID' and token_list[count_position][1] not in list_id:
+        print("Token '" + token_list[count_position][1] + "' was not declared.")
+        exit(1)
+
     if token_list[count_position][1] == token or token_list[count_position][0] == token:
         countIncremental(1)
         return True
@@ -513,7 +530,8 @@ def parser():
     if prog():
         print("Parsing successful")
     else:
-        print("Unexpected token before, or missing token before " + "'" + str(token_list[max_base][1]) + "'" + " on line: " + str(token_list[max_base][2]))
+        print("Unexpected token before, or missing token before " + "'" + str(
+            token_list[max_base][1]) + "'" + " on line: " + str(token_list[max_base][2]))
 
 
 if __name__ == '__main__':
