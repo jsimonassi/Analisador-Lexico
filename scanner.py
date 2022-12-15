@@ -7,7 +7,7 @@ from analyzer import Analyzer
 def open_file():
     """Abre o arquivo de entrada"""
     try:
-        return open("inputs/full_example.c", "r")
+        return open("inputs/comment_example.c", "r")
     except Exception as e:
         print("Erro ao abrir o arquivo: " + str(e))
         exit(1)

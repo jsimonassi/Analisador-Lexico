@@ -522,7 +522,7 @@ def match(token, isDecl=False):
     global count_position
     global error_aux
     if not isDecl and token_list[count_position][0] == 'ID' and token_list[count_position][1] not in list_id:
-        print("Token '" + token_list[count_position][1] + "' was not declared.")
+        print("Token '" + token_list[count_position][1] + "' was not declared at line " + str(token_list[count_position][2]))
         exit(1)
 
     if token_list[count_position][1] == token or token_list[count_position][0] == token:
@@ -535,8 +535,17 @@ def match(token, isDecl=False):
 
 def parser():
     global token_list
-    token_list = get_token_list()
-    print(token_list)
+    response_list = get_token_list()
+    print(response_list)
+    token_list = response_list.copy()
+    for item in response_list:
+        if item[0] == "UNKNOWN_TOKEN":
+            print("Unknown token: " + item[1] + " at line " + str(item[2]))
+            exit(1)
+
+        if item[0] == "OPEN_COMMENT" or item[0] == "CLOSE_COMMENT":
+            token_list.remove(item)
+
     if prog():
         print("Parsing successful")
     else:

@@ -66,7 +66,7 @@ class Analyzer:
     def append_error(self, token):
         """Adiciona o erro na lista de tokens"""
         if token != "\n" and token != " ":
-            self.response_token.append(["Token não reconhecido", token, self.line])
+            self.response_token.append(["UNKNOWN_TOKEN", token, self.line])
 
     """State Methods"""
     def run_state_comment(self):

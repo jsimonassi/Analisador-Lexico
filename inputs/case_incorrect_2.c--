@@ -1,19 +1,19 @@
 #include<stdio.h>
 
 /*
-   Esqueceu o ponto e vírgula nas linhas 11, 16.
+   Declaração incorreta na linha 8
 */
 int main(void){
     char texto;
-    int i;
+    i int;
 
     while(i < 100){
-        i = i + 3
+        i = i + 3;
     }
 
     for(;;){
         i = i + 3;
-        texto = "a"
+        texto = "a";
     }
 
     return 1;

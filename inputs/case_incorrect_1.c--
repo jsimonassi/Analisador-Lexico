@@ -1,0 +1,14 @@
+#include<stdio.h>
+
+/*
+   % não é um operador da linguagem
+*/
+int main(void){
+    int i,n;
+    for(i=2;i<n;i = i + 1){
+        if(n%i==0){
+            return 0
+        }
+    }
+    return 1;
+}
