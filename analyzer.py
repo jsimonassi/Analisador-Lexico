@@ -22,7 +22,9 @@ class Analyzer:
         if type is not None:
             self.response_token.append([type, token, self.line])
         elif re.match(r"[\d]", token):
-            self.response_token.append(["NUMBER", token, self.line])
+            self.response_token.append(["INTCON", token, self.line])
+        elif re.match(r"[\"]+[%\w\s]+[\"]*", token):
+            self.response_token.append(["STRINGCON", token, self.line])
         else:
             self.response_token.append(["ID", token, self.line])
 
@@ -38,7 +40,7 @@ class Analyzer:
             self.append_identifier("<=")
             self.cursor = self.line_iterator[self.column]
 
-        elif re.match(r"[\>]", self.token) and self.line_iterator[self.column] == "=":
+        elif re.match(r"[\>]", token) and self.line_iterator[self.column] == "=":
             self.flag = 1
             self.append_identifier(">=")
             self.cursor = self.line_iterator[self.column]

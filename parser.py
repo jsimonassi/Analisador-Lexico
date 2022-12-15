@@ -39,7 +39,7 @@ def var_decl1():
     global count_position
     base = count_position
     update_max_base(base)
-    if match("[") and match("NUMBER") and match("]"):
+    if match("[") and match("INTCON") and match("]"):
         return True
     else:
         count_position = base
@@ -238,12 +238,22 @@ def func4():
 
 # end func ____________________________________________________________
 
+def caseElse():
+    global count_position
+    base = count_position
+    update_max_base(base)
+    if match('else'):
+        return True
+    else:
+        count_position = base
+    return True
+
 # stmt ____________________________________________________________
 def stmt():
     global count_position
     base = count_position
     update_max_base(base)
-    if match("if") and match("(") and expr() and match(")") and stmt():
+    if match("if") and match("(") and expr() and match(")") and stmt() and caseElse() and stmt():
         return True
     else:
         count_position = base
@@ -388,7 +398,7 @@ def expr():
         return True
     else:
         count_position = base
-    if match("NUMBER") and expr3():
+    if match("INTCON") and expr3():
         return True
     else:
         count_position = base
@@ -396,7 +406,7 @@ def expr():
         return True
     else:
         count_position = base
-    if match("stringcon") and expr3():
+    if match("STRINGCON") and expr3():
         return True
     else:
         count_position = base

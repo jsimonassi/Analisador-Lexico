@@ -30,22 +30,24 @@ def get_token_list():
                 continue
 
             if lex_analyzer.state == STATES.INITIAL:
+                # Verifica se o é o inicio de um comentário
                 if lex_analyzer.cursor == "/" and lex_analyzer.line_iterator[lex_analyzer.column] == "*" and \
                         lex_analyzer.state == STATES.INITIAL and lex_analyzer.state != STATES.COMMENT:
                     lex_analyzer.state = STATES.COMMENT
                     lex_analyzer.append_identifier("/*")
-
+                # Verifica se é alguma importação
                 if re.search(r"^(#)", lex_analyzer.line_iterator) and lex_analyzer.state == STATES.INITIAL and \
                         lex_analyzer.state != STATES.COMMENT:
                     break
-
+                # Verifica se é um identificador (int, char ou variaveis)
                 if re.search(r"([A-Za-z_])", lex_analyzer.cursor) and lex_analyzer.state == STATES.INITIAL and \
                         lex_analyzer.state != STATES.COMMENT:
                     lex_analyzer.state = STATES.IDENTIFIER
-
+                # Verifica se é um número
                 if re.match(r"[0-9]", lex_analyzer.cursor) and lex_analyzer.state == STATES.INITIAL and \
                         lex_analyzer.state != STATES.COMMENT:
                     lex_analyzer.state = STATES.NUMERIC
+                # Verifica se é um uma palavra do tipo char por exemplo
                 if re.match(r"[\"]", lex_analyzer.cursor) and lex_analyzer.state == STATES.INITIAL and \
                         lex_analyzer.state != STATES.COMMENT:
                     lex_analyzer.state = STATES.LITERAL
