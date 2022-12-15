@@ -1,21 +1,20 @@
 from constants import STATES
 import re
 import utils
-from analyzer import Analyzer
 
 
-def open_file():
+def open_file(filename):
     """Abre o arquivo de entrada"""
     try:
-        return open("inputs/comment_example.c", "r")
+        return open("inputs/" + filename , "r")
     except Exception as e:
         print("Erro ao abrir o arquivo: " + str(e))
         exit(1)
 
 
-def get_token_list():
-    lex_analyzer = Analyzer()
-    input_file = open_file()
+def get_token_list(analyzer, filename):
+    lex_analyzer = analyzer
+    input_file = open_file(filename)
     for line_iterator in input_file:
         lex_analyzer.line += 1
         lex_analyzer.column = 0

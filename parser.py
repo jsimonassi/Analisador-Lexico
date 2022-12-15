@@ -1,557 +1,456 @@
-from scanner import *
-
-token_list = []
-count_position = 0
-count_base = 0
-error_aux = []
-max_base = 0
-list_id = []
-
-
-def appendId(token):
-    if (token[1] in list_id):
-        print("Token '" + str(token[1]) + "' already exists. Redeclaration in line: " + str(token[2]))
-        exit(1)
-    list_id.append(token[1])
-
-
-def update_max_base(base):
-    global max_base
-    if (max_base < base):
-        max_base = base
-
-
-# var_decl ____________________________________________________________
-def var_decl():
-    global count_position
-    global list_id
-    base = count_position
-    update_max_base(base)
-    if match("ID", isDecl=True) and var_decl1():
-        appendId(token_list[base])
-        return True
-    else:
-        count_position = base
-    return False
-
-
-def var_decl1():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if match("[") and match("INTCON") and match("]"):
-        return True
-    else:
-        count_position = base
-    return True
-
-
-# end var_decl ____________________________________________________________
-
-# parm_types ____________________________________________________________
-
-def parm_types():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if match('void'):
-        return True
-    else:
-        count_position = base
-    if _type() and match("ID", isDecl=True) and match("[") and match("]") and parm_types2():
-        appendId(token_list[base + 1])
-        return True
-    else:
-        count_position = base
-    if _type() and match("ID", isDecl=True) and parm_types2():
-        appendId(token_list[base + 1])
-        return True
-    else:
-        count_position = base
-    return False
-
-
-def parm_types2():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if match(',') and parm_types():
-        return True
-    else:
-        count_position = base
-    return True
-
-
-# end parm_types ____________________________________________________________
-
-def _type():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if match("int") or match("char"):
-        return True
-    else:
-        count_position = base
-    return False
-
-
-# dcl ____________________________________________________________
-def dcl():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if _type() and dcl1():
-        return True
-    else:
-        count_position = base
-    if dcl5():
-        return True
-    else:
-        count_position = base
-    if match('void') and dcl3() and dcl4():
-        return True
-    else:
-        count_position = base
-    return False
-
-
-def dcl1():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if var_decl() and dcl2():
-        return True
-    else:
-        count_position = base
-    if dcl3() and dcl4():
-        return True
-    else:
-        count_position = base
-    return True
-
-
-def dcl2():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if match(',') and var_decl():
-        return True
-    else:
-        count_position = base
-    return True
-
-
-def dcl3():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if match("ID") and match("(") and parm_types() and match(")"):
-        return True
-    else:
-        count_position = base
-    return False
-
-
-def dcl4():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if match(',') and dcl3():
-        return True
-    else:
-        count_position = base
-    return True
-
-
-def dcl5():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if match('extern') and dcl():
-        return True
-    else:
-        count_position = base
-    return False
-
-
-# end_dcl ____________________________________________________________
-
-# func ____________________________________________________________
-def func():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if _type() and func1():
-        return True
-    else:
-        count_position = base
-    if match('void') and func1():
-        return True
-    else:
-        count_position = base
-    return False
-
-
-def func1():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if match("ID") and match("(") and parm_types() and match(")") and match("{") and func2() and func4() and match("}"):
-        return True
-    else:
-        count_position = base
-    return False
-
-
-def func2():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if _type() and var_decl() and func3() and match(';') and func2():
-        return True
-    else:
-        count_position = base
-    return True
-
-
-def func3():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if match(',') and var_decl() and func3():
-        return True
-    else:
-        count_position = base
-    return True
-
-
-def func4():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if stmt() and func2():
-        return True
-    else:
-        count_position = base
-    return True
-
-
-# end func ____________________________________________________________
-
-def caseElse():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if match('else'):
-        return True
-    else:
-        count_position = base
-    return True
-
-# stmt ____________________________________________________________
-def stmt():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if match("if") and match("(") and expr() and match(")") and stmt() and caseElse() and stmt():
-        return True
-    else:
-        count_position = base
-    if match("if") and match("(") and expr() and match(")") and match("else") and stmt():
-        return True
-    else:
-        count_position = base
-    if match("while") and match("(") and expr() and match(")") and stmt():
-        return True
-    else:
-        count_position = base
-    if match("for") and match("(") and match(";") and match(";") and match(")") and stmt():
-        return True
-    else:
-        count_position = base
-    if match("for") and match("(") and assg() and match(";") and match(";") and match(")") and stmt():
-        return True
-    else:
-        count_position = base
-    if match("for") and match("(") and match(";") and expr() and match(";") and match(")") and stmt():
-        return True
-    else:
-        count_position = base
-    if match("for") and match("(") and match(";") and match(";") and assg() and match(")") and stmt():
-        return True
-    else:
-        count_position = base
-    if match("for") and match("(") and assg() and match(";") and expr() and match(";") and match(")") and stmt():
-        return True
-    else:
-        count_position = base
-    if match("for") and match("(") and assg() and match(";") and match(";") and assg() and match(")") and stmt():
-        return True
-    else:
-        count_position = base
-    if match("for") and match("(") and match(";") and expr() and match(";") and assg() and match(")") and stmt():
-        return True
-    else:
-        count_position = base
-    if match("for") and match("(") and assg() and match(";") and expr() and match(";") and assg() and match(
-            ")") and stmt():
-        return True
-    else:
-        count_position = base
-    if match("return") and match(";") and stmt():
-        return True
-    else:
-        count_position = base
-    if match("return") and expr() and match(";") and stmt():
-        return True
-    else:
-        count_position = base
-    if assg() and match(";") and stmt():
-        return True
-    else:
-        count_position = base
-    if match("ID") and match("(") and match(")") and match(";") and stmt():
-        return True
-    else:
-        count_position = base
-    if match("ID") and match("(") and expr() and stmt2() and match(")") and match(";") and stmt():
-        return True
-    else:
-        count_position = base
-    if match("{") and stmt() and match("}") and stmt():
-        return True
-    else:
-        count_position = base
-    if match(";") and stmt():
-        return True
-    else:
-        count_position = base
-    return True
-
-
-def stmt2():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if match(",") and expr() and stmt2():
-        return True
-    else:
-        count_position = base
-    return True
-
-
-# end stmt ____________________________________________________________
-
-# assg
-def assg():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if match("ID") and match("=") and expr():
-        return True
-    else:
-        count_position = base
-    if match("ID") and match("[") and expr() and match("]") and match("=") and expr():
-        return True
-    else:
-        count_position = base
-    return False
-
-
-# end assg ____________________________________________________________
-
-# expr ____________________________________________________________
-
-def expr():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if match("-") and expr3():
-        return True
-    else:
-        count_position = base
-    if match("!") and expr3():
-        return True
-    else:
-        count_position = base
-    if match("ID") and expr3():
-        return True
-    else:
-        count_position = base
-    if match("ID") and match("(") and match(")") and expr3():
-        return True
-    else:
-        count_position = base
-    if match("ID") and match("(") and expr() and match(")") and expr3():
-        return True
-    else:
-        count_position = base
-    if match("ID") and match("(") and expr() and expr2() and match(")") and expr3():
-        return True
-    else:
-        count_position = base
-    if match("ID") and match("[") and expr() and match("]") and expr3():
-        return True
-    else:
-        count_position = base
-    if match("(") and expr() and match(")") and expr3():
-        return True
-    else:
-        count_position = base
-    if match("INTCON") and expr3():
-        return True
-    else:
-        count_position = base
-    if match("CHAR") and expr3():
-        return True
-    else:
-        count_position = base
-    if match("STRINGCON") and expr3():
-        return True
-    else:
-        count_position = base
-    return False
-
-
-def expr2():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if match(",") and expr() and expr3():
-        return True
-    else:
-        count_position = base
-    return True
-
-
-def expr3():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if binop() and expr() and expr3():
-        return True
-    else:
-        count_position = base
-    if relop() and expr() and expr3():
-        return True
-    else:
-        count_position = base
-    if logicalOp() and expr() and expr3():
-        return True
-    else:
-        count_position = base
-        return True
-
-
-# end expr ____________________________________________________________
-
-# binop ____________________________________________________________
-
-def binop():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if match("+") or match("-") or match("*") or match("/") or match("%"):
-        return True
-    else:
-        count_position = base
-    return False
-
-
-# end binop ____________________________________________________________
-
-# relop ____________________________________________________________
-
-def relop():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if match("<") or match(">") or match("<=") or match(">=") or match("==") or match("!="):
-        return True
-    else:
-        count_position = base
-    return False
-
-
-# end relop ____________________________________________________________
-
-
-# logicalOp ____________________________________________________________
-
-def logicalOp():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if match("&&") or match("||"):
-        return True
-    else:
-        count_position = base
-    return False
-
-
-# end logicalOp ____________________________________________________________
-
-# prog ____________________________________________________________
-def prog():
-    global count_position
-    base = count_position
-    update_max_base(base)
-    if dcl() and match(';'):
-        return True
-    else:
-        count_position = base
-    if func():
-        return True
-    else:
-        count_position = base
-    return False
-
-
-# Helper functions --------------------------------------------------
-def countIncremental(amount):
-    global count_position
-    count_position += amount
-
-
-# end_prog ____________________________________________________________
-
-
-# Verifica o match com o token atual
-def match(token, isDecl=False):
-    global token_list
-    global count_position
-    global error_aux
-    if not isDecl and token_list[count_position][0] == 'ID' and token_list[count_position][1] not in list_id:
-        print("Token '" + token_list[count_position][1] + "' was not declared at line " + str(token_list[count_position][2]))
-        exit(1)
-
-    if token_list[count_position][1] == token or token_list[count_position][0] == token:
-        countIncremental(1)
-        return True
-    else:
-        error_aux.append(token_list[count_position][1])
+class Parser:
+
+    def __init__(self, filtered_tokens):
+        self.token_list = filtered_tokens
+        self.count_position = 0
+        self.count_base = 0
+        self.error_aux = []
+        self.max_base = 0
+        self.list_id = []
+
+    def append_new_identifier(self, token):
+        """Adiciona o token na lista de identificadores"""
+        if token[1] in self.list_id:
+            print("Token '" + str(token[1]) + "' already exists. Redeclaration in line: " + str(token[2]))
+            exit(1)
+        self.list_id.append(token[1])
+
+    def update_max_base(self, base):
+        """Atualiza o valor da base. Base é a posição do token antes de uma validação"""
+        if self.max_base < base:
+            self.max_base = base
+
+    # Funções extraídas da EBNF fatorada:
+    def var_decl(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self.match("ID", isDecl=True) and self.var_decl1():
+            self.append_new_identifier(self.token_list[base])
+            return True
+        else:
+            self.count_position = base
         return False
 
+    def var_decl1(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self.match("[") and self.match("INTCON") and self.match("]"):
+            return True
+        else:
+            self.count_position = base
+        return True
 
-def parser():
-    global token_list
-    response_list = get_token_list()
-    print(response_list)
-    token_list = response_list.copy()
-    for item in response_list:
-        if item[0] == "UNKNOWN_TOKEN":
-            print("Unknown token: " + item[1] + " at line " + str(item[2]))
+    def parm_types(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self.match('void'):
+            return True
+        else:
+            count_position = base
+        if self._type() and self.match("ID", isDecl=True) and self.match("[") and self.match(
+                "]") and self.parm_types2():
+            self.append_new_identifier(self.token_list[base + 1])
+            return True
+        else:
+            self.count_position = base
+        if self._type() and self.match("ID", isDecl=True) and self.parm_types2():
+            self.append_new_identifier(self.token_list[base + 1])
+            return True
+        else:
+            self.count_position = base
+        return False
+
+    def parm_types2(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self.match(',') and self.parm_types():
+            return True
+        else:
+            self.count_position = base
+        return True
+
+    def _type(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self.match("int") or self.match("char"):
+            return True
+        else:
+            self.count_position = base
+        return False
+
+    def dcl(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self._type() and self.dcl1():
+            return True
+        else:
+            self.count_position = base
+        if self.dcl5():
+            return True
+        else:
+            self.count_position = base
+        if self.match('void') and self.dcl3() and self.dcl4():
+            return True
+        else:
+            self.count_position = base
+        return False
+
+    def dcl1(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self.var_decl() and self.dcl2():
+            return True
+        else:
+            self.count_position = base
+        if self.dcl3() and self.dcl4():
+            return True
+        else:
+            self.count_position = base
+        return True
+
+    def dcl2(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self.match(',') and self.var_decl():
+            return True
+        else:
+            self.count_position = base
+        return True
+
+    def dcl3(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self.match("ID") and self.match("(") and self.parm_types() and self.match(")"):
+            return True
+        else:
+            self.count_position = base
+        return False
+
+    def dcl4(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self.match(',') and self.dcl3():
+            return True
+        else:
+            self.count_position = base
+        return True
+
+    def dcl5(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self.match('extern') and self.dcl():
+            return True
+        else:
+            self.count_position = base
+        return False
+
+    def func(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self._type() and self.func1():
+            return True
+        else:
+            count_position = base
+        if self.match('void') and self.func1():
+            return True
+        else:
+            self.count_position = base
+        return False
+
+    def func1(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self.match("ID") and self.match("(") and self.parm_types() and self.match(")") and self.match(
+                "{") and self.func2() and self.func4() and self.match("}"):
+            return True
+        else:
+            self.count_position = base
+        return False
+
+    def func2(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self._type() and self.var_decl() and self.func3() and self.match(';') and self.func2():
+            return True
+        else:
+            self.count_position = base
+        return True
+
+    def func3(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self.match(',') and self.var_decl() and self.func3():
+            return True
+        else:
+            self.count_position = base
+        return True
+
+    def func4(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self.stmt() and self.func2():
+            return True
+        else:
+            self.count_position = base
+        return True
+
+    def caseElse(self):  # TODO: Utils
+        base = self.count_position
+        self.update_max_base(base)
+        if self.match('else'):
+            return True
+        else:
+            self.count_position = base
+        return True
+
+    def stmt(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self.match("if") and self.match("(") and self.expr() and self.match(
+                ")") and self.stmt() and self.caseElse() and self.stmt():
+            return True
+        else:
+            self.count_position = base
+        if self.match("if") and self.match("(") and self.expr() and self.match(")") and self.match(
+                "else") and self.stmt():
+            return True
+        else:
+            self.count_position = base
+        if self.match("while") and self.match("(") and self.expr() and self.match(")") and self.stmt():
+            return True
+        else:
+            self.count_position = base
+        if self.match("for") and self.match("(") and self.match(";") and self.match(";") and self.match(
+                ")") and self.stmt():
+            return True
+        else:
+            self.count_position = base
+        if self.match("for") and self.match("(") and self.assg() and self.match(";") and self.match(";") and self.match(
+                ")") and self.stmt():
+            return True
+        else:
+            self.count_position = base
+        if self.match("for") and self.match("(") and self.match(";") and self.expr() and self.match(";") and self.match(
+                ")") and self.stmt():
+            return True
+        else:
+            self.count_position = base
+        if self.match("for") and self.match("(") and self.match(";") and self.match(";") and self.assg() and self.match(
+                ")") and self.stmt():
+            return True
+        else:
+            self.count_position = base
+        if self.match("for") and self.match("(") and self.assg() and self.match(";") and self.expr() and self.match(
+                ";") and self.match(")") and self.stmt():
+            return True
+        else:
+            self.count_position = base
+        if self.match("for") and self.match("(") and self.assg() and self.match(";") and self.match(
+                ";") and self.assg() and self.match(")") and self.stmt():
+            return True
+        else:
+            self.count_position = base
+        if self.match("for") and self.match("(") and self.match(";") and self.expr() and self.match(
+                ";") and self.assg() and self.match(")") and self.stmt():
+            return True
+        else:
+            self.count_position = base
+        if self.match("for") and self.match("(") and self.assg() and self.match(";") and self.expr() and self.match(
+                ";") and self.assg() and self.match(")") and self.stmt():
+            return True
+        else:
+            self.count_position = base
+        if self.match("return") and self.match(";") and self.stmt():
+            return True
+        else:
+            self.count_position = base
+        if self.match("return") and self.expr() and self.match(";") and self.stmt():
+            return True
+        else:
+            self.count_position = base
+        if self.assg() and self.match(";") and self.stmt():
+            return True
+        else:
+            self.count_position = base
+        if self.match("ID") and self.match("(") and self.match(")") and self.match(";") and self.stmt():
+            return True
+        else:
+            self.count_position = base
+        if self.match("ID") and self.match("(") and self.expr() and self.stmt2() and self.match(")") and self.match(
+                ";") and self.stmt():
+            return True
+        else:
+            self.count_position = base
+        if self.match("{") and self.stmt() and self.match("}") and self.stmt():
+            return True
+        else:
+            self.count_position = base
+        if self.match(";") and self.stmt():
+            return True
+        else:
+            self.count_position = base
+        return True
+
+    def stmt2(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self.match(",") and self.expr() and self.stmt2():
+            return True
+        else:
+            self.count_position = base
+        return True
+
+    def assg(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self.match("ID") and self.match("=") and self.expr():
+            return True
+        else:
+            self.count_position = base
+        if self.match("ID") and self.match("[") and self.expr() and self.match("]") and self.match("=") and self.expr():
+            return True
+        else:
+            self.count_position = base
+        return False
+
+    def expr(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self.match("-") and self.expr3():
+            return True
+        else:
+            self.count_position = base
+        if self.match("!") and self.expr3():
+            return True
+        else:
+            self.count_position = base
+        if self.match("ID") and self.expr3():
+            return True
+        else:
+            self.count_position = base
+        if self.match("ID") and self.match("(") and self.match(")") and self.expr3():
+            return True
+        else:
+            self.count_position = base
+        if self.match("ID") and self.match("(") and self.expr() and self.match(")") and self.expr3():
+            return True
+        else:
+            count_position = base
+        if self.match("ID") and self.match("(") and self.expr() and self.expr2() and self.match(")") and self.expr3():
+            return True
+        else:
+            self.count_position = base
+        if self.match("ID") and self.match("[") and self.expr() and self.match("]") and self.expr3():
+            return True
+        else:
+            self.count_position = base
+        if self.match("(") and self.expr() and self.match(")") and self.expr3():
+            return True
+        else:
+            self.count_position = base
+        if self.match("INTCON") and self.expr3():
+            return True
+        else:
+            self.count_position = base
+        if self.match("CHAR") and self.expr3():
+            return True
+        else:
+            self.count_position = base
+        if self.match("STRINGCON") and self.expr3():
+            return True
+        else:
+            self.count_position = base
+        return False
+
+    def expr2(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self.match(",") and self.expr() and self.expr3():
+            return True
+        else:
+            self.count_position = base
+        return True
+
+    def expr3(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self.binop() and self.expr() and self.expr3():
+            return True
+        else:
+            self.count_position = base
+        if self.relop() and self.expr() and self.expr3():
+            return True
+        else:
+            self.count_position = base
+        if self.logicalOp() and self.expr() and self.expr3():
+            return True
+        else:
+            self.count_position = base
+            return True
+
+    def binop(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self.match("+") or self.match("-") or self.match("*") or self.match("/") or self.match("%"):
+            return True
+        else:
+            self.count_position = base
+        return False
+
+    def relop(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self.match("<") or self.match(">") or self.match("<=") or self.match(">=") or self.match("==") or self.match(
+                "!="):
+            return True
+        else:
+            self.count_position = base
+        return False
+
+    def logicalOp(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self.match("&&") or self.match("||"):
+            return True
+        else:
+            self.count_position = base
+        return False
+
+    def prog(self):
+        base = self.count_position
+        self.update_max_base(base)
+        if self.dcl() and self.match(';'):
+            return True
+        else:
+            self.count_position = base
+        if self.func():
+            return True
+        else:
+            self.count_position = base
+        return False
+
+    def countIncremental(self, amount):
+        self.count_position += amount
+
+    def match(self, token, isDecl=False):
+        if not isDecl and self.token_list[self.count_position][0] == 'ID' and self.token_list[self.count_position][
+            1] not in self.list_id:
+            print("Token '" + self.token_list[self.count_position][1] + "' was not declared at line " + str(
+                self.token_list[self.count_position][2]))
             exit(1)
 
-        if item[0] == "OPEN_COMMENT" or item[0] == "CLOSE_COMMENT":
-            token_list.remove(item)
+        if self.token_list[self.count_position][1] == token or self.token_list[self.count_position][0] == token:
+            self.countIncremental(1)
+            return True
+        else:
+            self.error_aux.append(self.token_list[self.count_position][1])
+            return False
 
-    if prog():
-        print("Parsing successful")
-    else:
-        print("Unexpected token before, or missing token before " + "'" + str(
-            token_list[max_base][1]) + "'" + " on line: " + str(token_list[max_base][2]))
-
-
-if __name__ == '__main__':
-    parser()
+    def start_parser(self):
+        if self.prog():
+            print("Accepted")
+        else:
+            # TODO texto merda
+            print("Error at token " + self.token_list[self.max_base][1] + "'" + " on line: " + str(
+                self.token_list[self.max_base][2]))
+            exit(1)
