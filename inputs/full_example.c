@@ -1,11 +1,12 @@
 #include <stdio.h>
 
-int main(int leo, int joao, char berna, char pessi){
-    int a,c,d,g,dsd,SDsSasS,ddddd;
+int main(int leo, int joao[], char berna, char pessi){
+    int a[1],c,d,g,dsd,SDsSasS,ddddd;
     char gustavoObrabo;
     int teste;
     leo = "2";
-    joao = 7;
+    joao[0] = 2;
+
     pessi = 999;
 
     for( a=0;a<=9;a= a +1){

@@ -58,12 +58,12 @@ def parm_types():
         return True
     else:
         count_position = base
-    if _type() and match("ID", isDecl=True) and parm_types2():
+    if _type() and match("ID", isDecl=True) and match("[") and match("]") and parm_types2():
         appendId(token_list[base + 1])
         return True
     else:
         count_position = base
-    if _type() and match("ID", isDecl=True) and match("[") and match("]") and parm_types2():
+    if _type() and match("ID", isDecl=True) and parm_types2():
         appendId(token_list[base + 1])
         return True
     else:
