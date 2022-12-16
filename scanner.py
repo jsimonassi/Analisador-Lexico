@@ -3,10 +3,10 @@ import re
 import utils
 
 
-def open_file(filename):
+def open_file(filepath):
     """Abre o arquivo de entrada"""
     try:
-        return open("inputs/" + filename , "r")
+        return open(filepath, "r")
     except Exception as e:
         print("Erro ao abrir o arquivo: " + str(e))
         exit(1)
@@ -30,10 +30,10 @@ def filter_token_list(token_list, verbose=False):
     return filtered_list
 
 
-def get_token_list(analyzer, filename, verbose=False):
+def get_token_list(analyzer, filepath, verbose=False):
     """Percorre o arquivo obtendo tokens de entrada"""
     lex_analyzer = analyzer
-    input_file = open_file(filename)
+    input_file = open_file(filepath)
     for line_iterator in input_file:
         lex_analyzer.line += 1
         lex_analyzer.column = 0
