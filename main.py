@@ -2,7 +2,7 @@ from scanner import *
 from analyzer import Analyzer
 from parser import Parser
 import os
-
+from show import *
 
 def menu():
     base_path = "./inputs"
@@ -29,7 +29,9 @@ def compile(filepath):
     analyzer = Analyzer()
     filtered_list = get_token_list(analyzer, filepath, True)
 
-    Parser(filtered_list).start_parser()
+    derivation_tree = Parser(filtered_list).start_parser()
+
+    show_derivation_tree(derivation_tree)
 
 
 if __name__ == '__main__':

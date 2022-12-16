@@ -1,3 +1,6 @@
+import inspect
+from tree import Node
+
 class Parser:
 
     def __init__(self, filtered_list):
@@ -5,13 +8,16 @@ class Parser:
         self.position = 0
         self.error_point = 0
         self.list_id = []
+        self.derivation_tree = []
 
     def start_parser(self):
         """Inicia o processo de parser pelo símbolo não terminal inicial"""
-        if self.prog():
+        compile_success, derivation_tree = self.prog()
+        if compile_success:
             print("Código compilado com sucesso!")
+            return derivation_tree
         else:
-            print("Identificador inexistente ou inesperado próximo á: " + self.token_list[self.error_point][
+            print("Identificador inexistente ou inesperado próximo a: " + self.token_list[self.error_point][
                 1] + "'" + " na linha:" + str(
                 self.token_list[self.error_point][2]))
             exit(1)
@@ -31,17 +37,36 @@ class Parser:
 
     def check_token(self, token, is_new_id=False):
         """Verifica se o token atual é valido. Verifica também se o token do tipo ID já foi declarado."""
-        if not is_new_id and self.token_list[self.position][0] == 'ID' and self.token_list[self.position][
-            1] not in self.list_id:
-            print("A variável '" + self.token_list[self.position][
-                1] + "' ainda não foi declarada e está sendo usada na linha: " + str(
+        if not is_new_id and self.token_list[self.position][0] == 'ID' and self.token_list[self.position][1] not in self.list_id:
+            print("A variável '" + self.token_list[self.position][1] + "' ainda não foi declarada e está sendo usada na linha: " + str(
                 self.token_list[self.position][2]))
             exit(1)
 
         if self.token_list[self.position][1] == token or self.token_list[self.position][0] == token:
+            self.append_branch(self.token_list[self.position][1])
             self.position += 1
             return True
         return False
+
+    def append_branch(self, token):
+        """Adiciona o token na árvore de derivação"""
+        flag_add_list = False
+        recursive_stack = []
+        for i in range(len(inspect.stack()) - 1, 0, -1):
+            _, _, _, function_name, _, _ = inspect.stack()[i]
+            if function_name == 'prog':
+                flag_add_list = True
+
+            if function_name == 'check_token':
+                recursive_stack.append(token)
+                flag_add_list = False
+
+            if flag_add_list:
+                recursive_stack.append(function_name)
+
+        branch = Node.make_node_by_recursive_list(recursive_stack)
+        for node in branch:
+            self.derivation_tree = Node.append_child(self.derivation_tree, node)
 
 # Funções extraídas da EBNF fatorada:
     def var_decl(self):
@@ -443,12 +468,12 @@ class Parser:
         safe_point = self.position
         self.update_error_point(safe_point)
         if self.dcl() and self.check_token(';'):
-            return True
+            return True, self.derivation_tree
         else:
             self.position = safe_point
         if self.func():
-            return True
+            return True, self.derivation_tree
         else:
             self.position = safe_point
-        return False
+        return False, None
 
