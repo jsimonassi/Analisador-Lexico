@@ -17,10 +17,10 @@ def is_reserved_word(word):
 def is_number(token):
     """Verifica se o elemento pertence ao grupo das constantes numericas"""
     if(re.match(r"[\d.]", token)):
-        return 0
+        return False
     else:
         """Se ele não pertence retorna 1"""
-        return 1
+        return True
 
 
 def is_error(token):

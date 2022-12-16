@@ -1,7 +1,7 @@
 class Parser:
 
-    def __init__(self, filtered_tokens):
-        self.token_list = filtered_tokens
+    def __init__(self, filtered_list):
+        self.token_list = filtered_list
         self.position = 0
         self.error_point = 0
         self.list_id = []
@@ -217,7 +217,7 @@ class Parser:
             self.position = safe_point
         return True
 
-    def caseElse(self):  # TODO: Utils
+    def else_case(self):
         safe_point = self.position
         self.update_error_point(safe_point)
         if self.check_token('else'):
@@ -230,7 +230,7 @@ class Parser:
         safe_point = self.position
         self.update_error_point(safe_point)
         if self.check_token("if") and self.check_token("(") and self.expr() and self.check_token(
-                ")") and self.stmt() and self.caseElse() and self.stmt():
+                ")") and self.stmt() and self.else_case() and self.stmt():
             return True
         else:
             self.position = safe_point

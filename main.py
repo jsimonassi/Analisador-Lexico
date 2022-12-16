@@ -6,5 +6,4 @@ if __name__ == '__main__':
     analyzer = Analyzer()
     filtered_list = get_token_list(analyzer, "case_correct.c--", True)
 
-    parser = Parser(filtered_list)
-    parser.start_parser()
+    Parser(filtered_list).start_parser()

@@ -43,8 +43,8 @@ def get_token_list(analyzer, filename, verbose=False):
             lex_analyzer.column += 1
             lex_analyzer.cursor = cursor
 
-            if lex_analyzer.flag == 1:
-                lex_analyzer.flag = 0
+            if lex_analyzer.is_look_ahead == 1:
+                lex_analyzer.is_look_ahead = 0
                 continue
 
             if lex_analyzer.state == STATES.INITIAL:
@@ -65,7 +65,7 @@ def get_token_list(analyzer, filename, verbose=False):
                 if re.match(r"[0-9]", lex_analyzer.cursor) and lex_analyzer.state == STATES.INITIAL and \
                         lex_analyzer.state != STATES.COMMENT:
                     lex_analyzer.state = STATES.NUMERIC
-                # Verifica se é um uma palavra do tipo char por exemplo
+                # Verifica se é um uma palavra do tipo char. Identifica aspas (Início ou término de um literal)
                 if re.match(r"[\"]", lex_analyzer.cursor) and lex_analyzer.state == STATES.INITIAL and \
                         lex_analyzer.state != STATES.COMMENT:
                     lex_analyzer.state = STATES.LITERAL
@@ -74,21 +74,18 @@ def get_token_list(analyzer, filename, verbose=False):
                         lex_analyzer.cursor) and lex_analyzer.state == STATES.INITIAL and lex_analyzer.state != STATES.COMMENT:
 
                     if not utils.is_error(lex_analyzer.cursor):
-
-                        lex_analyzer.append_identifier_double(lex_analyzer.cursor)
-                        if lex_analyzer.flag == 1:
+                        lex_analyzer.append_identifier_look_ahead(lex_analyzer.cursor)
+                        if lex_analyzer.is_look_ahead == 1:
                             continue
-
                     else:
-
                         if lex_analyzer.cursor == '&' and lex_analyzer.line_iterator[lex_analyzer.column] == "&":
-                            lex_analyzer.append_identifier_double(lex_analyzer.cursor)
+                            lex_analyzer.append_identifier_look_ahead(lex_analyzer.cursor)
 
                         elif lex_analyzer.cursor == '|' and lex_analyzer.line_iterator[lex_analyzer.column] == "|":
-                            lex_analyzer.append_identifier_double(lex_analyzer.cursor)
+                            lex_analyzer.append_identifier_look_ahead(lex_analyzer.cursor)
 
                         elif lex_analyzer.cursor == "!" and lex_analyzer.line_iterator[lex_analyzer.column] == "=":
-                            lex_analyzer.append_identifier_double(lex_analyzer.cursor)
+                            lex_analyzer.append_identifier_look_ahead(lex_analyzer.cursor)
 
                         else:
                             lex_analyzer.append_error(lex_analyzer.cursor)
