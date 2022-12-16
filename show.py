@@ -13,4 +13,4 @@ def show_derivation_tree(derivation_tree):
             graph.add_edge(node.name, child)
 
     net.from_nx(graph)
-    net.show("graph.html")
+    net.show("derivation_tree.html")
