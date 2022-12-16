@@ -12,7 +12,26 @@ def open_file(filename):
         exit(1)
 
 
-def get_token_list(analyzer, filename):
+def filter_token_list(token_list, verbose=False):
+    """Verifica se existem tokens desconhecidos e filtra tokens de comentários"""
+    filtered_list = token_list.copy()
+    for item in token_list:
+        if item[0] == "UNKNOWN_TOKEN":
+            print("ERRO LÉXICO: O token '" + item[1] + "' na linha: " + str(item[2]) + " não foi reconhecido")
+            exit(1)
+
+        if item[0] == "OPEN_COMMENT" or item[0] == "CLOSE_COMMENT":
+            filtered_list.remove(item)
+
+    if verbose:
+        print("Tokens lidos: " + str(token_list))
+        print("Tokens filtrados: " + str(filtered_list))
+
+    return filtered_list
+
+
+def get_token_list(analyzer, filename, verbose=False):
+    """Percorre o arquivo obtendo tokens de entrada"""
     lex_analyzer = analyzer
     input_file = open_file(filename)
     for line_iterator in input_file:
@@ -86,4 +105,4 @@ def get_token_list(analyzer, filename):
             if lex_analyzer.state == STATES.NUMERIC:
                 lex_analyzer.run_state_numeric()
 
-    return lex_analyzer.response_token
+    return filter_token_list(lex_analyzer.response_token, verbose)

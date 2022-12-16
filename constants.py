@@ -4,7 +4,6 @@ RESERVED_WORDS = ['int', 'char', 'if', 'else', 'for', 'while', 'return']
 
 BIN_OPS = ['+', '-', '*', '/']
 
-# TODO: Igualdade é relacional?
 REL_OP = ['<', '>', '==', '!=', '<=', '>=', '=']
 
 LOGIC_OP = ['&&', '||']
@@ -12,7 +11,6 @@ LOGIC_OP = ['&&', '||']
 SEPARATORS = ['(', ')', '{', '}', '[', ']', ';', ',']
 
 ALL_ELEMENTS = BIN_OPS + REL_OP + LOGIC_OP + SEPARATORS
-
 
 TYPE_BY_OPERATORS = {
     '+': 'SUM',
