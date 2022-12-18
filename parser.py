@@ -9,6 +9,7 @@ class Parser:
         self.error_point = 0
         self.list_id = []
         self.derivation_tree = []
+        self.tree_items = []
 
     def start_parser(self):
         """Inicia o processo de parser pelo símbolo não terminal inicial"""
@@ -65,8 +66,7 @@ class Parser:
                 recursive_stack.append(function_name)
 
         branch = Node.make_node_by_recursive_list(recursive_stack)
-        for node in branch:
-            self.derivation_tree = Node.append_child(self.derivation_tree, node)
+        self.derivation_tree, self.tree_items = Node.append_child(self.derivation_tree, branch, self.tree_items)
 
 # Funções extraídas da EBNF fatorada:
     def var_decl(self):

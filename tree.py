@@ -17,18 +17,44 @@ class Node:
         return result
 
     @staticmethod
-    def append_child(tree, child):
-        find = False
-        for node in tree:
-            if node.name == child.name:
-                # Se o nó já está na lista, junta os filhos
-                for child in child.children:
-                    if child not in node.children:
-                        node.children.append(child)
-                find = True
+    def append_child(tree, child, tree_items):
+        if not tree:  # Se árvore está vazia, inicializa com o primeiro ramo
+            for node in child:
+                tree.append(node)
+                tree_items.append(node.name)
+            return tree, tree_items
+
+        last_father_index = 0
+        for i in range(0, len(tree)):
+            if tree[i].name == child[i].name:
+                last_father_index = i
+            else:
                 break
 
-        if not find:  # Se o nó não está na lista, adiciona ele
-            tree.append(child)
+        new_node_name = Node.get_new_node_name(child[last_father_index + 1].name, tree_items)
+        tree[last_father_index].children.append(new_node_name)
+        tree_items.append(new_node_name)
+        for i in range(last_father_index + 1, len(child)):
+            child[i].name = Node.get_new_node_name(child[i].name, tree_items)
+            tree_items.append(child[i].name)
+            for j in range(0, len(child[i].children)):
+                child[i].children[j] = Node.get_new_node_name(child[i].children[j], tree_items)
+                tree_items.append(child[i].children[j])
+            tree.append(child[i])
 
-        return tree
+        return tree, tree_items
+
+    def __eq__(self, other):
+        filterd_self = self.name.replace("*", "")
+        filterd_other = other.name.replace("*", "")
+        return filterd_self == filterd_other
+
+    @staticmethod
+    def get_new_node_name(node_name, node_list):
+        acc = 0
+        for name in node_list:
+            if name == node_name:
+                acc += 1
+        if acc >= 2:
+            return node_name + "*"
+        return node_name
